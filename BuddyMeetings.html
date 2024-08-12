@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bi-Weekly Buddy Meetings</title>
+    <style>
+        body {    
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #timer {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .management {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .management input[type="text"] {
+            width: 150px;
+        }
+
+        .management button {
+            margin: 5px;
+        }
+
+        .management p {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bi-Weekly Buddy Meetings</h1>
+        <input type="text" id="nameInput" placeholder="Your Name">
+        <button onclick="getBuddyPair()">Get My Buddy</button>
+        <div id="result"></div>
+        <div id="timer"></div>
+        <div id="schedulingLink" style="margin-top: 20px;">
+            <p>Schedule your one-on-one meeting:</p>
+            <a id="scheduleButton" href="https://outlook.office.com/book/TeamBuddyMeeting@fibrick.com/s/HhD-znZxc0-YPjpcLpRRcw2?ae=true&login_hint" target="_blank">Schedule Meeting</a>
+        </div>
+        <div class="management">
+            <h2>Manage Team Members</h2>
+            <input type="text" id="manageNameInput" placeholder="Name">
+            <button onclick="addName()">Add</button>
+            <button onclick="removeName()">Remove</button>
+            <p id="managementResult"></p>
+        </div>
+    </div>
+
+    <script>
+        // List of team members
+        let teamMembers = ['Kirsten', 'Laila', 'Joy', 'Donna', 'Xyrah', 'Princess', 'Chris', 'Brianna'];
+
+        // Object to store past pairings
+        let pastPairings = {};
+
+        // Object to store current pairs
+        let currentPairs = {};
+
+        // Object to store the last request time for each person
+        let lastRequestTimes = {};
+
+        // Timer settings
+        let timeLimitMilliseconds = 14 * 24 * 60 * 60 * 1000; // 2 weeks in milliseconds
+
+        // Function to get buddy pair
+        function getBuddyPair() {
+            const nameInput = document.getElementById('nameInput').value.trim();
+
+            if (nameInput === "") {
+                document.getElementById('result').textContent = "Please enter your name.";
+                return;
+            }
+
+            if (!teamMembers.includes(nameInput)) {
+                document.getElementById('result').textContent = "Your name is not in the team members list.";
+                return;
+            }
+
+            // Check if the user is trying to get a new pair before the time limit is up
+            if (lastRequestTimes[nameInput] && (new Date() - lastRequestTimes[nameInput]) < timeLimitMilliseconds) {
+                document.getElementById('result').textContent = `You already have a buddy: ${currentPairs[nameInput]}. Please wait for the time limit to expire before requesting a new pair.`;
+                return;
+            }
+
+            lastRequestTimes[nameInput] = new Date();
+            updateTimer(nameInput);
+
+            // Check if the name is already matched with someone else
+            if (currentPairs[nameInput]) {
+                document.getElementById('result').textContent = `Hello ${nameInput}, your buddy is: ${currentPairs[nameInput]}`;
+                return;
+            }
+
+            // Generate new pairings if none exist
+            let availableMembers = teamMembers.filter(member => member !== nameInput && !Object.values(currentPairs).includes(member));
+            let possiblePartners = availableMembers.filter(member => !isPreviouslyPaired(nameInput, member));
+
+            if (possiblePartners.length === 0) {
+                document.getElementById('result').textContent = "No available new pairings. Resetting pairings.";
+                pastPairings = {};
+                currentPairs = {};
+                return;
+            }
+
+            let randomIndex = Math.floor(Math.random() * possiblePartners.length);
+            let buddy = possiblePartners[randomIndex];
+
+            storePairing(nameInput, buddy);
+
+            document.getElementById('result').textContent = `Hello ${nameInput}, your buddy is: ${buddy}`;
+            updateSchedulingLink(buddy);
+        }
+
+        // Function to check if two members have been previously paired
+        function isPreviouslyPaired(member1, member2) {
+            return (pastPairings[member1] && pastPairings[member1].includes(member2)) ||
+                   (pastPairings[member2] && pastPairings[member2].includes(member1));
+        }
+
+        // Function to store the pairing in the past pairings object and current pairs
+        function storePairing(member1, member2) {
+            if (!pastPairings[member1]) pastPairings[member1] = [];
+            if (!pastPairings[member2]) pastPairings[member2] = [];
+            pastPairings[member1].push(member2);
+            pastPairings[member2].push(member1);
+
+            // Store current pairings
+            currentPairs[member1] = member2;
+            currentPairs[member2] = member1;
+        }
+
+        // Function to update the timer display
+        function updateTimer(nameInput) {
+            let timerElement = document.getElementById('timer');
+            let interval = setInterval(() => {
+                let remainingTime = timeLimitMilliseconds - (new Date() - lastRequestTimes[nameInput]);
+                if (remainingTime <= 0) {
+                    timerElement.textContent = "You can request a new pair now.";
+                    clearInterval(interval);
+                } else {
+                    timerElement.textContent = `Please wait ${Math.ceil(remainingTime / (24 * 60 * 60 * 1000))} day(s) to request a new pair.`;
+                }
+            }, 1000);
+        }
+
+        // Function to update the scheduling link
+        function updateSchedulingLink(buddy) {
+            let scheduleButton = document.getElementById('scheduleButton');
+            scheduleButton.href = `https://outlook.office.com/book/TeamBuddyMeeting@fibrick.com/s/HhD-znZxc0-YPjpcLpRRcw2?ae=true&login_hint=${encodeURIComponent(buddy)}`;
+        }
+
+        // Function to add a name to the list
+        function addName() {
+            const nameInput = document.getElementById('manageNameInput').value.trim();
+            if (nameInput && !teamMembers.includes(nameInput)) {
+                teamMembers.push(nameInput);
+                document.getElementById('managementResult').textContent = `Added: ${nameInput}`;
+            } else {
+                document.getElementById('managementResult').textContent = `Name already exists or is invalid.`;
+            }
+            document.getElementById('manageNameInput').value = '';
+        }
+
+        // Function to remove a name from the list
+        function removeName() {
+            const nameInput = document.getElementById('manageNameInput').value.trim();
+            const index = teamMembers.indexOf(nameInput);
+            if (index !== -1) {
+                teamMembers.splice(index, 1);
+                document.getElementById('managementResult').textContent = `Removed: ${nameInput}`;
+            } else {
+                document.getElementById('managementResult').textContent = `Name not found.`;
+            }
+            document.getElementById('manageNameInput').value = '';
+        }
+    </script>
+</body>
+</html>
