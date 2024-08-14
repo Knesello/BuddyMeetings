@@ -1,0 +1,13 @@
+bi-weekly-buddy-meetings/
+├── app/
+│   ├── __init__.py
+│   ├── routes.py
+│   └── database.py
+├── static/
+│   ├── style.css
+├── templates/
+│   └── index.html
+├── .gitignore
+├── README.md
+├── requirements.txt
+└── app.py
