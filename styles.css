@@ -1,0 +1,64 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 50px;
+}
+
+h1 {
+    font-size: 24px;
+}
+
+#pairingForm, #scheduleMeeting, #manageNames, #reminder, #pairedNames {
+    margin-bottom: 20px;
+}
+
+#userNameInput, #newName {
+    padding: 10px;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#result {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#scheduleMeeting a {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#scheduleMeeting a:hover {
+    background-color: #0056b3;
+}
+
+#reminder {
+    font-size: 16px;
+    color: #ff0000;
+    font-weight: bold;
+}
+
+#pairedNames {
+    text-align: left;
+    margin: auto;
+    width: fit-content;
+}
+
+#pairingList {
+    list-style-type: none;
+    padding: 0;
+}
