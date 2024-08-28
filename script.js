@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updatePairingList();
     document.getElementById('pairingForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent form from submitting and refreshing the page
+        pairBuddy(); // Manually call pairBuddy on form submit
     });
 });
 
@@ -69,11 +70,12 @@ function pairBuddy() {
     const now = Date.now();
     const userPairing = pairingHistory[userName] || { pairs: [], pairedOn: [] };
     
-    // Check if the user can be paired based on the fingerprint
+    // Check if the user has an existing pair within the 2-week period
     if (userPairing[fingerprint] && userPairing[fingerprint].pairedOn.length > 0) {
         const lastPairedOn = userPairing[fingerprint].pairedOn[userPairing[fingerprint].pairedOn.length - 1];
         if (now - lastPairedOn < pairingPeriod) {
-            document.getElementById('result').textContent = "You have already been paired recently. Please wait 2 weeks before pairing again.";
+            const lastBuddy = userPairing[fingerprint].pairs[userPairing[fingerprint].pairs.length - 1];
+            document.getElementById('result').textContent = `You have already been paired with ${lastBuddy}. Please wait 2 weeks before pairing again.`;
             return;
         }
     }
