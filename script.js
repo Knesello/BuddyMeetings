@@ -1,6 +1,14 @@
 const pairingPeriod = 14 * 24 * 60 * 60 * 1000; // 2 weeks in milliseconds
 let names = ["Kirsten", "Laila", "Joy", "Donna", "Xyrah", "Princess", "Chris", "Brianna"];
-let pairingHistory = {};
+let pairingHistory = loadPairingHistory();
+
+// Function to generate a simple browser fingerprint
+function generateFingerprint() {
+    const userAgent = navigator.userAgent;
+    const screenResolution = `${screen.width}x${screen.height}`;
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return `${userAgent}-${screenResolution}-${timezone}`;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     updatePairingList();
@@ -9,12 +17,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+function savePairingHistory() {
+    localStorage.setItem('pairingHistory', JSON.stringify(pairingHistory));
+}
+
+function loadPairingHistory() {
+    const data = localStorage.getItem('pairingHistory');
+    return data ? JSON.parse(data) : {};
+}
+
 function addName() {
     const newName = document.getElementById('newName').value.trim();
     if (newName && !names.includes(newName)) {
         names.push(newName);
         pairingHistory[newName] = { pairs: [], pairedOn: [] };
         updatePairingList();
+        savePairingHistory();
         document.getElementById('newName').value = '';
     } else {
         alert("Please enter a valid, unique name.");
@@ -27,6 +45,7 @@ function removeName() {
         names = names.filter(name => name !== nameToRemove);
         delete pairingHistory[nameToRemove];
         updatePairingList();
+        savePairingHistory();
         document.getElementById('newName').value = '';
     } else {
         alert("Please enter a valid name that exists.");
@@ -35,6 +54,7 @@ function removeName() {
 
 function pairBuddy() {
     const userName = document.getElementById('userNameInput').value.trim();
+    const fingerprint = generateFingerprint();
     
     if (userName === "") {
         document.getElementById('result').textContent = "Please enter your name.";
@@ -49,9 +69,9 @@ function pairBuddy() {
     const now = Date.now();
     const userPairing = pairingHistory[userName] || { pairs: [], pairedOn: [] };
     
-    // Check if the user can be paired
-    if (userPairing.pairedOn.length > 0) {
-        const lastPairedOn = userPairing.pairedOn[userPairing.pairedOn.length - 1];
+    // Check if the user can be paired based on the fingerprint
+    if (userPairing[fingerprint] && userPairing[fingerprint].pairedOn.length > 0) {
+        const lastPairedOn = userPairing[fingerprint].pairedOn[userPairing[fingerprint].pairedOn.length - 1];
         if (now - lastPairedOn < pairingPeriod) {
             document.getElementById('result').textContent = "You have already been paired recently. Please wait 2 weeks before pairing again.";
             return;
@@ -60,8 +80,8 @@ function pairBuddy() {
 
     const availableNames = names.filter(name => 
         name !== userName && 
-        (!pairingHistory[name] || !pairingHistory[name].pairedOn.length || 
-        (now - pairingHistory[name].pairedOn[pairingHistory[name].pairedOn.length - 1] >= pairingPeriod))
+        (!pairingHistory[name] || !pairingHistory[name][fingerprint] || !pairingHistory[name][fingerprint].pairedOn.length || 
+        (now - pairingHistory[name][fingerprint].pairedOn[pairingHistory[name][fingerprint].pairedOn.length - 1] >= pairingPeriod))
     );
 
     if (availableNames.length === 0) {
@@ -72,17 +92,24 @@ function pairBuddy() {
     const buddyName = availableNames[Math.floor(Math.random() * availableNames.length)];
 
     // Update pairing history
-    userPairing.pairs.push(buddyName);
-    userPairing.pairedOn.push(now);
+    if (!userPairing[fingerprint]) {
+        userPairing[fingerprint] = { pairs: [], pairedOn: [] };
+    }
+    userPairing[fingerprint].pairs.push(buddyName);
+    userPairing[fingerprint].pairedOn.push(now);
     pairingHistory[userName] = userPairing;
 
     if (!pairingHistory[buddyName]) {
-        pairingHistory[buddyName] = { pairs: [], pairedOn: [] };
+        pairingHistory[buddyName] = {};
     }
-    pairingHistory[buddyName].pairs.push(userName);
-    pairingHistory[buddyName].pairedOn.push(now);
+    if (!pairingHistory[buddyName][fingerprint]) {
+        pairingHistory[buddyName][fingerprint] = { pairs: [], pairedOn: [] };
+    }
+    pairingHistory[buddyName][fingerprint].pairs.push(userName);
+    pairingHistory[buddyName][fingerprint].pairedOn.push(now);
 
     updatePairingList();
+    savePairingHistory();
 
     document.getElementById('result').textContent = `You have been paired with ${buddyName}.`;
 }
@@ -92,31 +119,35 @@ function updatePairingList() {
     pairingList.innerHTML = '';
 
     const pairs = new Set();
-    for (const [person, { pairs: buddies }] of Object.entries(pairingHistory)) {
-        buddies.forEach(buddy => {
-            const pairKey = [person, buddy].sort().join('-');
-            if (!pairs.has(pairKey)) {
-                pairs.add(pairKey);
-                const li = document.createElement('li');
-                li.textContent = `${person} is paired with ${buddy}`;
-                pairingList.appendChild(li);
-            }
-        });
+    for (const [person, history] of Object.entries(pairingHistory)) {
+        for (const [fingerprint, { pairs: buddies }] of Object.entries(history)) {
+            buddies.forEach(buddy => {
+                const pairKey = [person, buddy].sort().join('-');
+                if (!pairs.has(pairKey)) {
+                    pairs.add(pairKey);
+                    const li = document.createElement('li');
+                    li.textContent = `${person} is paired with ${buddy}`;
+                    pairingList.appendChild(li);
+                }
+            });
+        }
     }
 }
 
 function resetPairings() {
     const now = Date.now();
-    const allPaired = names.every(name => pairingHistory[name] && pairingHistory[name].pairedOn.length > 0 &&
-        now - pairingHistory[name].pairedOn[pairingHistory[name].pairedOn.length - 1] >= pairingPeriod
-    );
+    const allPaired = names.every(name => pairingHistory[name] && Object.keys(pairingHistory[name]).every(fingerprint => 
+        pairingHistory[name][fingerprint].pairedOn.length > 0 &&
+        now - pairingHistory[name][fingerprint].pairedOn[pairingHistory[name][fingerprint].pairedOn.length - 1] >= pairingPeriod
+    ));
 
     if (allPaired) {
         pairingHistory = {};
         names.forEach(name => {
-            pairingHistory[name] = { pairs: [], pairedOn: [] };
+            pairingHistory[name] = {};
         });
         updatePairingList();
+        savePairingHistory();
         document.getElementById('result').textContent = "All pairings have been reset.";
     } else {
         document.getElementById('result').textContent = "Not all names have been paired yet.";
