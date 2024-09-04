@@ -1,5 +1,5 @@
 const pairingPeriod = 14 * 24 * 60 * 60 * 1000; // 2 weeks in milliseconds
-let names = ["Kirsten", "Laila", "Joy", "Donna", "Xyrah", "Princess", "Chris", "Brianna"];
+let names = ["Kirsten", "Laila", "Joy", "Kim", "Xyrah", "Princess", "April", "Brianna"];
 let pairingHistory = loadPairingHistory();
 
 // Function to generate a simple browser fingerprint
