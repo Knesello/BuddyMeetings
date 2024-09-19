@@ -4,13 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buddy Pairing</title>
+    <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
 </head>
 <body>
-    <h1>Buddy Pairing</h1>
-    <ul id="pairingList"></ul>
-    <p>
-        <a href="https://book.ms/b/TeamBuddyMeeting@fibrick.com" id="scheduleMeeting" target="_blank">Schedule Meeting</a>
-    </p>
+    <div class="container">
+        <header>
+            <h1>Buddy Pairing Program</h1>
+            <p>Connecting buddies every two weeks. Please wait two weeks before getting a new buddy.</p>
+        </header>
+        <section>
+            <h2>Current Pairings</h2>
+            <ul id="pairingList" class="pairing-list"></ul>
+        </section>
+        <footer>
+            <a href="https://book.ms/b/TeamBuddyMeeting@fibrick.com" id="scheduleMeeting" target="_blank" class="btn">Schedule Meeting</a>
+        </footer>
+    </div>
 </body>
 </html>
