@@ -1,64 +1,79 @@
+/* General page styling */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7f6;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Container for all content */
+.container {
+    width: 90%;
+    max-width: 600px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
     text-align: center;
-    margin-top: 50px;
 }
 
-h1 {
-    font-size: 24px;
+/* Header styling */
+header h1 {
+    color: #2c3e50;
+    font-size: 2em;
+    margin-bottom: 10px;
 }
 
-#pairingForm, #scheduleMeeting, #manageNames, #reminder, #pairedNames {
+header p {
+    color: #7f8c8d;
+    font-size: 1em;
     margin-bottom: 20px;
 }
 
-#userNameInput, #newName {
-    padding: 10px;
-    font-size: 16px;
-    margin-right: 10px;
+/* Section title */
+section h2 {
+    font-size: 1.5em;
+    color: #34495e;
+    margin-bottom: 20px;
 }
 
-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-#result {
-    margin-top: 20px;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-#scheduleMeeting a {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    text-decoration: none;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#scheduleMeeting a:hover {
-    background-color: #0056b3;
-}
-
-#reminder {
-    font-size: 16px;
-    color: #ff0000;
-    font-weight: bold;
-}
-
-#pairedNames {
-    text-align: left;
-    margin: auto;
-    width: fit-content;
-}
-
-#pairingList {
+/* Pairing list styling */
+.pairing-list {
     list-style-type: none;
     padding: 0;
+}
+
+.pairing-list li {
+    background-color: #ecf0f1;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    color: #2c3e50;
+    font-size: 1.1em;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Footer button styling */
+footer {
+    margin-top: 30px;
+}
+
+.btn {
+    background-color: #1abc9c;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #16a085;
 }
