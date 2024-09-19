@@ -24,7 +24,13 @@ function generatePairs() {
         if (shuffledNames[i + 1]) {
             pairs.push(`${shuffledNames[i]} is paired with ${shuffledNames[i + 1]}`);
         } else {
-            pairs.push(`${shuffledNames[i]} has no pair`);
+            // If there's an odd person, pair them with the last full pair
+            const lastPairIndex = pairs.length - 1;
+            if (lastPairIndex >= 0) {
+                pairs[lastPairIndex] += ` and ${shuffledNames[i]}`;
+            } else {
+                pairs.push(`${shuffledNames[i]} has no pair`);
+            }
         }
     }
 
