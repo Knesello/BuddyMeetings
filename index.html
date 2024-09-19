@@ -3,47 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buddy Pairing System</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Buddy Pairing</title>
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <h1>Buddy Pairing System</h1>
-    
-    <!-- Form to select name and find a buddy -->
-    <form id="pairingForm">
-        <label for="userNameInput">Enter your name:</label>
-        <input type="text" id="userNameInput" placeholder="Type your name">
-        <button type="button" onclick="pairBuddy()">Find Your Buddy</button>
-    </form>
-
-    <div id="result"></div>
-
-    <!-- Section to display paired names -->
-    <div id="pairedNames">
-        <h2>Current Pairings</h2>
-        <ul id="pairingList"></ul>
-    </div>
-
-    <!-- Section to schedule a meeting -->
-    <div id="scheduleMeeting">
-        <h2>Schedule Your Meeting</h2>
-        <a id="meetingLink" href="https://book.ms/b/TeamBuddyMeeting@fibrick.com" target="_blank">Click here to schedule your meeting</a>
-    </div>
-
-    <!-- Reminder message -->
-    <div id="reminder">
-        <h2>Important Notice</h2>
-        <p>Please wait at least 2 weeks before pairing with a new partner.</p>
-    </div>
-
-    <!-- Section to add/remove names -->
-    <div id="manageNames">
-        <h2>Manage Names</h2>
-        <input type="text" id="newName" placeholder="Enter name">
-        <button type="button" onclick="addName()">Add Name</button>
-        <button type="button" onclick="removeName()">Remove Name</button>
-    </div>
-
-    <script src="script.js"></script>
+    <h1>Buddy Pairing</h1>
+    <ul id="pairingList"></ul>
+    <p>
+        <a href="https://book.ms/b/TeamBuddyMeeting@fibrick.com" id="scheduleMeeting" target="_blank">Schedule Meeting</a>
+    </p>
 </body>
 </html>
