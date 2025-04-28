@@ -1,6 +1,6 @@
 // Updated team member list: Chris and Donna removed, April added
  let names = ["Kirsten", "Laila", "Joy", "Xyrah", "Nikki", "Brianna", "Lovely", "Kenzie", "Jodelle", "Flor", "Joyce", "Maria"];
- const startDate = new Date(2024, 8, 23).getTime(); // September 23rd, 2024 (Month is 0-indexed, so 8 is September)
+ const startDate = new Date(2025, 4, 28).getTime(); //  (Month is 0-indexed, so 8 is September)
  const pairingPeriod = 14 * 24 * 60 * 60 * 1000; // 2 weeks in milliseconds
  
  document.addEventListener('DOMContentLoaded', () => {
