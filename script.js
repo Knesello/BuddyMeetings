@@ -1,104 +1,62 @@
-// Get references to the DOM elements
-const generateBtn = document.getElementById('generateBtn');
-const pairList = document.getElementById('pairList');
-
-// List of buddies
-let buddies = ["Kirsten", "Joy", "Lovely", "Laila", "Brianna", "Xyrah", "Flor", "Jodelle", "Joyce", "Nikki", "Maria"
-];
-
-// Function to shuffle array (Fisher-Yates shuffle)
-function shuffle(array) {
-  let currentIndex = array.length, randomIndex;
-
-  while (currentIndex !== 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // Swap
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]];
-  }
-
-  return array;
-}
-
-// Function to generate buddy pairs
-function generatePairs() {
-  let pairs = [];
-  let shuffledBuddies = shuffle([...buddies]); // Create a copy to shuffle
-
-  for (let i = 0; i < shuffledBuddies.length; i += 2) {
-    if (i + 1 < shuffledBuddies.length) {
-      pairs.push([shuffledBuddies[i], shuffledBuddies[i + 1]]);
-    } else {
-      pairs.push([shuffledBuddies[i], "No Partner"]);
-    }
-  }
-
-  return pairs;
-}
-
-// Function to display the pairs
-function displayPairs(pairs) {
-  pairList.innerHTML = ''; // Clear previous list
-  pairs.forEach(pair => {
-    const li = document.createElement('li');
-    li.textContent = pair[0] + ' & ' + pair[1];
-    pairList.appendChild(li);
-  });
-}
-
-// Function to show the next refresh date
-function showNextRefresh(savedAt) {
-  const nextRefresh = document.getElementById('nextRefresh');
-  if (savedAt) {
-    const nextRefreshDate = new Date(parseInt(savedAt) + 14 * 24 * 60 * 60 * 1000); // + 2 weeks
-    nextRefresh.textContent = `Next buddy refresh: ${nextRefreshDate.toLocaleDateString()}`;
-  } else {
-    nextRefresh.textContent = '';
-  }
-}
-
-// Event listener for DOM loaded
-document.addEventListener('DOMContentLoaded', () => {
-  const savedPairs = localStorage.getItem('buddyPairs');
-  const savedAt = localStorage.getItem('buddyPairsSavedAt');
-  const now = Date.now();
-  const twoWeeks = 14 * 24 * 60 * 60 * 1000; // 14 days in milliseconds
-
-  if (savedPairs && savedAt) {
-    if (now - savedAt < twoWeeks) {
-      displayPairs(JSON.parse(savedPairs));
-      showNextRefresh(savedAt);
-    } else {
-      // It's been more than 2 weeks → auto-generate new pairs
-      const newPairs = generatePairs();
-      displayPairs(newPairs);
-      localStorage.setItem('buddyPairs', JSON.stringify(newPairs));
-      localStorage.setItem('buddyPairsSavedAt', now);
-      showNextRefresh(now);
-
-      // Optional: show a message if pairs were refreshed
-      const refreshMessage = document.createElement('p');
-      refreshMessage.textContent = "New buddies have been assigned today!";
-      refreshMessage.style.color = 'green';
-      pairList.parentNode.insertBefore(refreshMessage, pairList);
-    }
-  } else {
-    // No saved pairs → generate immediately
-    const newPairs = generatePairs();
-    displayPairs(newPairs);
-    localStorage.setItem('buddyPairs', JSON.stringify(newPairs));
-    localStorage.setItem('buddyPairsSavedAt', now);
-    showNextRefresh(now);
-  }
-});
-
-// Event listener for generate button click
-generateBtn.addEventListener('click', () => {
-  const pairs = generatePairs();
-  displayPairs(pairs);
-  localStorage.setItem('buddyPairs', JSON.stringify(pairs));
-  localStorage.setItem('buddyPairsSavedAt', Date.now());
-  showNextRefresh(Date.now());
-});
+// Updated team member list: Chris and Donna removed, April added
+ let names = ["Kirsten", "Laila", "Joy", "Xyrah", "Nikki", "Brianna", "Lovely", "Kenzie", "Jodelle", "Flor", "Joyce", "Maria"];
+ const startDate = new Date(2024, 8, 23).getTime(); // September 23rd, 2024 (Month is 0-indexed, so 8 is September)
+ const pairingPeriod = 14 * 24 * 60 * 60 * 1000; // 2 weeks in milliseconds
+ 
+ document.addEventListener('DOMContentLoaded', () => {
+     generatePairs();
+     setInterval(generatePairs, pairingPeriod); // Update the pairs every 2 weeks
+ });
+ 
+ function generatePairs() {
+     const now = Date.now();
+     const timeSinceStart = now - startDate;
+ 
+     // Calculate the current pairing period (how many 2-week cycles have passed since the start date)
+     const currentPeriod = Math.floor(timeSinceStart / pairingPeriod);
+ 
+     // Shuffle the names array based on the current period (to get a consistent result each time)
+     const shuffledNames = shuffleNames(names, currentPeriod);
+ 
+     // Pair the shuffled names
+     const pairs = [];
+     for (let i = 0; i < shuffledNames.length; i += 2) {
+         if (shuffledNames[i + 1]) {
+             pairs.push(`${shuffledNames[i]} is paired with ${shuffledNames[i + 1]}`);
+         } else {
+             // If there's an odd person, pair them with the last full pair
+             const lastPairIndex = pairs.length - 1;
+             if (lastPairIndex >= 0) {
+                 pairs[lastPairIndex] += ` and ${shuffledNames[i]}`;
+             } else {
+                 pairs.push(`${shuffledNames[i]} has no pair`);
+             }
+         }
+     }
+ 
+     // Display the pairs on the page
+     const pairingList = document.getElementById('pairingList');
+     pairingList.innerHTML = '';
+     pairs.forEach(pair => {
+         const li = document.createElement('li');
+         li.textContent = pair;
+         pairingList.appendChild(li);
+     });
+ }
+ 
+ // Function to shuffle names in a consistent way based on the current period
+ function shuffleNames(arr, period) {
+     const array = [...arr];
+     let currentIndex = array.length, randomIndex;
+ 
+     // Shuffle array using a seeded algorithm based on the period (to get the same result for each 2-week period)
+     while (currentIndex !== 0) {
+         randomIndex = (Math.floor(Math.random() * period) + currentIndex) % currentIndex;
+         currentIndex--;
+ 
+         // Swap elements
+         [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+     }
+ 
+     return array;
+ }
