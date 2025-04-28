@@ -2,10 +2,8 @@
 const generateBtn = document.getElementById('generateBtn');
 const pairList = document.getElementById('pairList');
 
-// Sample list of buddies
-let buddies = [
-  'Alice', 'Bob', 'Charlie', 'David',
-  'Eve', 'Frank', 'Grace', 'Heidi'
+// List of buddies
+let buddies = ["Kirsten", "Joy", "Lovely", "Laila", "Brianna", "Xyrah", "Flor", "Jodelle", "Joyce", "Nikki", "Maria"
 ];
 
 // Function to shuffle array (Fisher-Yates shuffle)
