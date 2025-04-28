@@ -1,7 +1,6 @@
-   document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
 
-// Get references to the DOM elements
-const generateBtn = document.getElementById('generateBtn');
+// Get reference to the UL element
 const pairList = document.getElementById('pairList');
 
 // Hardcoded buddy pairs
@@ -9,25 +8,22 @@ const pairs = [
   ['Kirsten', 'Flor'],
   ['Joy', 'Jodelle'],
   ['Brianna', 'Joyce'],
-  ['Laila', 'Nikki']
- ['Maria', 'Lovely']
- ['Xyrah', 'Kenzie']
+  ['Laila', 'Nikki'],
+  ['Maria', 'Lovely'],
+  ['Xyrah', 'Kenzie']
 ];
 
 // Function to display the pairs
 function displayPairs(pairs) {
   pairList.innerHTML = ''; // Clear previous list
-  pairs.forEach(pair => {
+  pairs.forEach((pair, index) => {
     const li = document.createElement('li');
-    li.textContent = pair[0] + ' & ' + pair[1];
+    li.textContent = `Pair ${index + 1}: ${pair[0]} & ${pair[1]}`;
     pairList.appendChild(li);
   });
 }
 
 // Always display the fixed buddy pairs
 displayPairs(pairs);
-
-// Hide the Generate button (optional)
-generateBtn.style.display = 'none';
 
 });
