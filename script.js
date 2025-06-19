@@ -5,7 +5,7 @@ const pairList = document.getElementById('pairList');
 
 // Hardcoded buddy pairs
 const pairs = [
- ['Kirsten', 'Maria'],
+['Kirsten', 'Maria'],
 ['Flor', 'Nikki'],
 ['Jodelle', 'Joyce'],
 ['Brianna', 'Lovely'],
