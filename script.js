@@ -10,6 +10,7 @@ const pairs = [
 ['Jodelle', 'Joyce'],
 ['Brianna', 'Lovely'],
 ['Laila', 'Xyrah', 'Kenzie'];
+  ]
 // Function to display the pairs
 function displayPairs(pairs) {
   pairList.innerHTML = ''; // Clear previous list
