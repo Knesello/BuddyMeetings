@@ -4,11 +4,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Hardcoded buddy pairs
   const pairs = [
-    ['Kirsten', 'Maria'],
-    ['Flor', 'Nikki'],
-    ['Jodelle', 'Joyce'],
-    ['Brianna', 'Lovely'],
-    ['Laila', 'Xyrah', 'Kenzie'] // <-- fixed closing bracket
+    ['Kirsten', 'Kenzie'], 
+    ['Flor', 'Brianna'], 
+    ['Jodelle', 'Xyrah'], 
+    ['Lovely', 'Nikki'], 
+    ['Laila', 'Maria', 'Joyce'] // <-- fixed closing bracket
   ];
 
   // Function to display the pairs
